@@ -48,16 +48,16 @@ public class WeatherAppGui extends JFrame {
         weatherConditionDesc.setHorizontalAlignment(SwingConstants.CENTER);
         add(weatherConditionDesc);
 
-        // humidity image
-        JLabel humidityImage = new JLabel(loadImage("src/assets/humidity.png"));
-        humidityImage.setBounds(15,500,74,66);
-        add(humidityImage);
+        // rain image
+        JLabel rainImage = new JLabel(loadImage("src/assets/humidity.png"));
+        rainImage.setBounds(15,500,74,66);
+        add(rainImage);
 
-        // humidity text
-        JLabel humidityText = new JLabel("<html><b>Humidity</b> 100%</html>");
-        humidityText.setBounds(90,500,85,55);
-        humidityText.setFont(new Font("Dialog", Font.PLAIN, 16));
-        add(humidityText);
+        // rain text
+        JLabel rainText = new JLabel("<html><b>Rain</b><br>0 mm</html>");
+        rainText.setBounds(90,500,85,55);
+        rainText.setFont(new Font("Dialog", Font.PLAIN, 16));
+        add(rainText);
 
         // windspeed image
         JLabel windspeedImage = new JLabel(loadImage("src/assets/windspeed.png"));
@@ -65,7 +65,7 @@ public class WeatherAppGui extends JFrame {
         add(windspeedImage);
 
         // windspeed text
-        JLabel windspeedText = new JLabel("<html><b>Windspeed></b> 15km/h</html>");
+        JLabel windspeedText = new JLabel("<html><b>Windspeed></b><br>0 m/s</html>");
         windspeedText.setBounds(310,500,85,55);
         windspeedText.setFont(new Font("Dialog", Font.PLAIN, 16));
         add(windspeedText);
@@ -79,11 +79,15 @@ public class WeatherAppGui extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String userInput = searchTextField.getText();
 
-                if (userInput.replaceAll("\\s", "").length() <= 0){
+                if (userInput.trim().isEmpty()){
                     return;
                 }
 
                 weatherData = WeatherApp.getWeatherData(userInput);
+
+                if (weatherData == null) {
+                    JOptionPane.showMessageDialog(null, "Weather data could not be retrieved", "Error", JOptionPane.ERROR_MESSAGE);
+                }
 
                 String weatherCondition = (String) weatherData.get("weather_condition");
 
@@ -103,16 +107,27 @@ public class WeatherAppGui extends JFrame {
 
                 }
 
-                double temperature = (double) weatherData.get("temperature");
-                temperatureText.setText(temperature + " C");
+                Number temperature = (Number) weatherData.get("temperature");
+                temperatureText.setText(temperature.doubleValue() + " C");
 
                 weatherConditionDesc.setText(weatherCondition);
 
-                long humidity = (long) weatherData.get("humidity");
-                humidityText.setText("<html><b>Humidity</b>" + humidity + "%</html>");
+                Number rainAmount = (Number) weatherData.get("rain");
 
-                double windspeed = (double) weatherData.get("windspeed");
-                windspeedText.setText("<html><b>Windspeed</b>" + windspeed + "km/h</html>");
+                if (rainAmount != null) {
+                    rainText.setText("<html><b>Rain</b><br>" + rainAmount.doubleValue() + " mm</html>");
+                } else {
+                    rainText.setText("<html><b>Rain</b><br>N/A</html>");
+                }
+
+                Number windspeed = (Number) weatherData.get("windspeed");
+
+                if (windspeed != null) {
+                    windspeedText.setText("<html><b>Windspeed</b><br>" + windspeed.doubleValue() + " m/s</html>");
+                } else {
+                    windspeedText.setText("<html><b>Windspeed</b><br>N/A</html>");
+                }
+
             }
         });
         add(searchButton);

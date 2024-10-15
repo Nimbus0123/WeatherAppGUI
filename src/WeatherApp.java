@@ -21,12 +21,12 @@ public class WeatherApp {
         double longitude = (double) location.get("longitude");
         String urlString = "https://api.open-meteo.com/v1/forecast?" +
                 "latitude=" + latitude + "&longitude=" + longitude +
-                "&hourly=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m";
+                "&hourly=temperature_2m,rain,weather_code,wind_speed_10m&wind_speed_unit=ms";
 
         try {
             HttpURLConnection conn = fetchApiResponse(urlString);
 
-            if (conn.getResponseCode() != 200){
+            if (conn == null){
                 System.out.println("Error: Could not connect to API");
                 return null;
             }
@@ -53,8 +53,8 @@ public class WeatherApp {
             JSONArray weathercode = (JSONArray) hourly.get("weather_code");
             String weatherCondition = convertWeatherCode((long) weathercode.get(index));
 
-            JSONArray relativeHumidity = (JSONArray) hourly.get("relative_humidity_2m");
-            long humidity = (long) relativeHumidity.get(index);
+            JSONArray rainData = (JSONArray) hourly.get("rain");
+            double rain = (double) rainData.get(index);
 
             JSONArray windspeedData = (JSONArray) hourly.get("wind_speed_10m");
             double windspeed = (double) windspeedData.get(index);
@@ -62,7 +62,7 @@ public class WeatherApp {
             JSONObject weatherData = new JSONObject();
             weatherData.put("temperature", temperature);
             weatherData.put("weather_condition", weatherCondition);
-            weatherData.put("humidity", humidity);
+            weatherData.put("rain", rain);
             weatherData.put("windspeed", windspeed);
 
             return weatherData;
@@ -113,7 +113,12 @@ public class WeatherApp {
 
             conn.setRequestMethod("GET");
             conn.connect();
-            return conn;
+
+            if (conn.getResponseCode() == 200){
+                return conn;
+            }else {
+                System.out.println("Error: Received response code " + conn.getResponseCode());
+            }
         }catch (IOException e){
             e.printStackTrace();
         }
