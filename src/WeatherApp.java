@@ -41,22 +41,22 @@ public class WeatherApp {
             conn.disconnect();
 
             JSONParser parser = new JSONParser();
-            JSONObject resultsJsonObj = (JSONObject) parser.parse(String.valueOf(resultJson));
-            JSONObject hourly = (JSONObject) resultsJsonObj.get("hourly");
+            JSONObject resultJsonObj = (JSONObject) parser.parse(String.valueOf(resultJson));
+            JSONObject hourly = (JSONObject) resultJsonObj.get("hourly");
             JSONArray time = (JSONArray) hourly.get("time");
 
             int index = findIndexOfCurrentTime(time);
 
-            JSONArray tempreratureData = (JSONArray) hourly.get("temperature_2m");
-            double temperature = (double) tempreratureData.get(index);
+            JSONArray temperatureData = (JSONArray) hourly.get("temperature_2m");
+            double temperature = (double) temperatureData.get(index);
 
-            JSONArray weathercode = (JSONArray) hourly.get("weathercode");
+            JSONArray weathercode = (JSONArray) hourly.get("weather_code");
             String weatherCondition = convertWeatherCode((long) weathercode.get(index));
 
-            JSONArray relativeHumidity = (JSONArray) hourly.get("relativehumidity_2m");
+            JSONArray relativeHumidity = (JSONArray) hourly.get("relative_humidity_2m");
             long humidity = (long) relativeHumidity.get(index);
 
-            JSONArray windspeedData = (JSONArray) hourly.get("windspeed_10m");
+            JSONArray windspeedData = (JSONArray) hourly.get("wind_speed_10m");
             double windspeed = (double) windspeedData.get(index);
 
             JSONObject weatherData = new JSONObject();
@@ -132,7 +132,7 @@ public class WeatherApp {
         return 0;
     }
 
-    public static String getCurrentTime(){
+    private static String getCurrentTime(){
         LocalDateTime currentDateTime = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH':00'");
         String formattedDateTime = currentDateTime.format(formatter);

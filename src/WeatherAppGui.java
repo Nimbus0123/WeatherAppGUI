@@ -85,7 +85,7 @@ public class WeatherAppGui extends JFrame {
 
                 weatherData = WeatherApp.getWeatherData(userInput);
 
-                String weatherCondition = (String) weatherData.get("weather-condition");
+                String weatherCondition = (String) weatherData.get("weather_condition");
 
                 switch (weatherCondition){
                     case "Clear":
@@ -112,7 +112,7 @@ public class WeatherAppGui extends JFrame {
                 humidityText.setText("<html><b>Humidity</b>" + humidity + "%</html>");
 
                 double windspeed = (double) weatherData.get("windspeed");
-                windspeedText.setText("<html><b>Windspeed</b>" + windspeed + "%</html>");
+                windspeedText.setText("<html><b>Windspeed</b>" + windspeed + "km/h</html>");
             }
         });
         add(searchButton);
